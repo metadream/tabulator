@@ -15,14 +15,17 @@
 new Tabulator("#example-table", {
   height: 500,
   frozenRows: 2,
-  columnHeaderVertAlign: "bottom",
+  bordered: true,
   movableColumns: true,
   movableRows: true,
+  columnHeaderVertAlign: "bottom",
+
   rowHeader:{
     resizable: false, frozen: true, headerSort: false,
     headerHozAlign: "center",  hozAlign: "center",
     formatter: "rowSelection", titleFormatter: "rowSelection",
   },
+
   columns:[
     { title: "Basic Info", frozen: true, columns: [
       { title:"Name", field:"name", width:100 },
@@ -34,6 +37,7 @@ new Tabulator("#example-table", {
     { title:"Date Of Birth", field:"dob", hozAlign:"center", frozen: true },
     { title:"Driver", field:"driver", hozAlign:"center", formatter:"tickCross", width:100, frozen:true },
   ],
+
   data: [
     { id:1, name:"Oliob", department:"Sales",progress:"12", rating:"red",gender: "Female", dob:"", driver:true },
     { id:2, name:"Mary", progress:"1", rating:"blue",gender: "Male", dob:"14/05/1982" },

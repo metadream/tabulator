@@ -722,9 +722,12 @@
     display: inline-block;
     position: relative;
     padding: 8px;
-    border-right: 1px solid var(--light-line-color);
     vertical-align: middle;
     outline: none;
+}
+
+.tabulator-bordered .tabulator-row .tabulator-cell {
+    border-right: 1px solid var(--light-line-color);
 }
 
 /** 行首列样式 */
