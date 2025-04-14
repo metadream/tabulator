@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="tabulator_plain.css" rel="stylesheet">
+  <script type="text/javascript" src="../dist/js/tabulator.min.js"></script>
+</head>
+<body>
+  <div id="example-table"></div>
+</body>
+</html>
+
+<script>
+new Tabulator("#example-table", {
+  height: 500,
+  frozenRows: 2,
+  columnHeaderVertAlign: "bottom",
+  movableColumns: true,
+  movableRows: true,
+  rowHeader:{
+    resizable: false, frozen: true, headerSort: false,
+    headerHozAlign: "center",  hozAlign: "center",
+    formatter: "rowSelection", titleFormatter: "rowSelection",
+  },
+  columns:[
+    { title: "Basic Info", frozen: true, columns: [
+      { title:"Name", field:"name", width:100 },
+      { title:"Dept.", field:"department", width:100 },
+    ] },
+    { title:"Progress", field:"progress", sorter:"number", formatter:"progress", width:200 },
+    { title:"Gender", field:"gender", width:100 },
+    { title:"Rating", field:"rating",  formatter:"star", hozAlign:"center", width:150 },
+    { title:"Date Of Birth", field:"dob", hozAlign:"center", frozen: true },
+    { title:"Driver", field:"driver", hozAlign:"center", formatter:"tickCross", width:100, frozen:true },
+  ],
+  data: [
+    { id:1, name:"Oliob", department:"Sales",progress:"12", rating:"red",gender: "Female", dob:"", driver:true },
+    { id:2, name:"Mary", progress:"1", rating:"blue",gender: "Male", dob:"14/05/1982" },
+    { id:3, name:"Lobowski", department:"Sales", progress:"42", rating:"4",gender: "Female", dob:"22/05/1982", driver:true },
+    { id:4, name:"Philips", department:"Finances", progress:"125", rating:"2",gender: "Male", dob:"01/08/1980", driver:true },
+    { id:5, name:"Margret", department:"Finances", progress:"16", rating:"4",gender: "Male", dob:"31/01/1999" },
+    { id:1, name:"Bob", progress:"12", rating:"red",gender: "Male", dob:"" },
+    { id:2, name:"May", progress:"1", department:"Technology", rating:"blue",gender: "Female", dob:"14/05/1982", driver:true },
+    { id:3, name:"Lobowski", progress:"42", rating:"3",gender: "Female", dob:"22/05/1982" },
+    { id:4, name:"Philips", progress:"125", rating:"1",gender: "Male", dob:"01/08/1980" },
+    { id:5, name:"Marmajuke", progress:"16", rating:"0",gender: "Male", dob:"31/01/1999", driver:true },
+    { id:1, name:"Oli", progress:"12", rating:"red",gender: "Female", dob:"" },
+    { id:2, name:"Mary", progress:"1", rating:"blue",gender: "Male", dob:"14/05/1982" },
+    { id:3, name:"Christine", progress:"42", rating:"5",gender: "Male", dob:"22/05/1982", driver:true },
+    { id:4, name:"Brendon", progress:"125", rating:"6",gender: "Male", dob:"01/08/1980", driver:true },
+    { id:5, name:"Margret", progress:"16", rating:"2",gender: "Female", dob:"31/01/1999" },
+    { id:1, name:"Oli", progress:"12", rating:"red",gender: "Female", dob:"" },
+    { id:2, name:"Mary", progress:"1", rating:"blue",gender: "Male", dob:"14/05/1982" },
+    { id:3, name:"Christine", progress:"42", rating:"5",gender: "Male", dob:"22/05/1982", driver:true },
+    { id:4, name:"Brendon", progress:"125", rating:"6",gender: "Male", dob:"01/08/1980", driver:true },
+    { id:5, name:"Margret", progress:"16", rating:"2",gender: "Female", dob:"31/01/1999" },
+  ]
+});
+</script>

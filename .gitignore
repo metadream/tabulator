@@ -3,6 +3,7 @@
 
 node_modules/
 examples/
+.idea/
 npm-debug.log
 
 # Playwright
