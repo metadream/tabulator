@@ -1,4 +1,4 @@
-export default function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered) {
 	var value = cell.getValue(),
 	element = cell.getElement(),
 	maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
@@ -11,8 +11,8 @@ export default function(cell, formatterParams, onRendered){
 	stars.style.verticalAlign = "middle";
 
 	//style star
-	star.setAttribute("width", "14");
-	star.setAttribute("height", "14");
+	star.setAttribute("width", "16");
+	star.setAttribute("height", "16");
 	star.setAttribute("viewBox", "0 0 512 512");
 	star.setAttribute("xml:space", "preserve");
 	star.style.padding = "0 1px";
@@ -21,7 +21,7 @@ export default function(cell, formatterParams, onRendered){
 
 	value = Math.max(0, Math.min(value, maxStars));
 
-	for(var i=1;i<= maxStars;i++){
+	for (var i = 1; i <= maxStars; i++) {
 		var nextStar = star.cloneNode(true);
 		nextStar.innerHTML = i <= value ? starActive : starInactive;
 

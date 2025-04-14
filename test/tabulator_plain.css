@@ -19,6 +19,10 @@
     transform: translateZ(0);
 }
 
+.tabulator * {
+    box-sizing: border-box;
+}
+
 .tabulator svg {
     vertical-align: middle;
 }
@@ -58,7 +62,6 @@
 
 .tabulator .tabulator-header {
     position: relative;
-    box-sizing: border-box;
     width: 100%;
     border-bottom: 1px solid var(--dark-line-color);
     background: var(--bg-color);
@@ -88,7 +91,6 @@
 .tabulator .tabulator-header .tabulator-col {
     display: inline-flex;
     position: relative;
-    box-sizing: border-box;
     flex-direction: column;
     justify-content: flex-start;
     border-right: 1px solid var(--light-line-color);
@@ -118,7 +120,6 @@
 /** 表头单元格样式 */
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
     position: relative;
-    box-sizing: border-box;
     padding: 8px;
 }
 
@@ -136,7 +137,6 @@
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
-    box-sizing: border-box;
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -150,7 +150,6 @@
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-title-editor {
-    box-sizing: border-box;
     width: 100%;
     border: 1px solid #999;
     padding: 1px;
@@ -189,7 +188,6 @@
 
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
     position: relative;
-    box-sizing: border-box;
     margin-top: 2px;
     width: 100%;
     text-align: center;
@@ -316,7 +314,6 @@
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder {
-    box-sizing: border-box;
     display: inline-block;
     background: #f3f3f3 !important;
     border-top: 1px solid #aaa;
@@ -362,7 +359,6 @@
 }
 
 .tabulator .tabulator-tableholder .tabulator-placeholder {
-    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -415,7 +411,6 @@
 
 .tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range {
     position: absolute;
-    box-sizing: border-box;
     border: 1px solid #2975dd;
 }
 
@@ -432,7 +427,6 @@
 
 .tabulator .tabulator-tableholder .tabulator-range-overlay .tabulator-range-cell-active {
     position: absolute;
-    box-sizing: border-box;
     border: 2px solid #2975dd;
 }
 
@@ -486,7 +480,6 @@
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder {
-    box-sizing: border-box;
     width: 100%;
     text-align: left;
     background: #f3f3f3 !important;
@@ -640,7 +633,6 @@
 /** 表格行样式 */
 .tabulator-row {
     position: relative;
-    box-sizing: border-box;
     min-height: 22px;
     border-bottom: 1px solid var(--light-line-color);
     background-color: #fff;
@@ -704,7 +696,6 @@
 }
 
 .tabulator-row .tabulator-responsive-collapse {
-    box-sizing: border-box;
     padding: 5px;
     border-top: 1px solid #aaa;
     border-bottom: 1px solid #aaa;
@@ -730,7 +721,6 @@
 .tabulator-row .tabulator-cell {
     display: inline-block;
     position: relative;
-    box-sizing: border-box;
     padding: 8px;
     border-right: 1px solid var(--light-line-color);
     vertical-align: middle;
@@ -956,7 +946,6 @@
 }
 
 .tabulator-row.tabulator-group {
-    box-sizing: border-box;
     border-bottom: 1px solid #999;
     border-right: 1px solid #aaa;
     border-top: 1px solid #999;
@@ -1024,7 +1013,6 @@
 }
 
 .tabulator-toggle {
-    box-sizing: border-box;
     display: flex;
     flex-direction: row;
     border: 1px solid #ccc;
@@ -1036,7 +1024,6 @@
 }
 
 .tabulator-toggle .tabulator-toggle-switch {
-    box-sizing: border-box;
     border: 1px solid #ccc;
     background: #fff;
 }
@@ -1044,7 +1031,6 @@
 .tabulator-popup-container {
     position: absolute;
     display: inline-block;
-    box-sizing: border-box;
     background: #fff;
     border: 1px solid #aaa;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
@@ -1070,7 +1056,6 @@
 
 .tabulator-menu .tabulator-menu-item {
     position: relative;
-    box-sizing: border-box;
     padding: 5px 10px;
     user-select: none;
 }
@@ -1286,7 +1271,6 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator-print-table .tabulator-print-table-group {
-    box-sizing: border-box;
     border-bottom: 1px solid #999;
     border-right: 1px solid #aaa;
     border-top: 1px solid #999;
