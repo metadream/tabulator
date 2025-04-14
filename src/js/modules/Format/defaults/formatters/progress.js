@@ -35,7 +35,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 				break;
 			}
 		default:
-			color = "#2DC214";
+			color = "#5ac262";
 	}
 
 	//generate legend
