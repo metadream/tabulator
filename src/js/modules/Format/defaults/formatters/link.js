@@ -1,32 +1,31 @@
 import Helpers from '../../../../core/tools/Helpers.js';
 
-
-export default function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered) {
 	var value = cell.getValue(),
-	urlPrefix = formatterParams.urlPrefix || "",
-	download = formatterParams.download,
-	label = value,
-	el = document.createElement("a"),
-	data;
+		urlPrefix = formatterParams.urlPrefix || "",
+		download = formatterParams.download,
+		label = value,
+		el = document.createElement("a"),
+		data;
 
-	function labelTraverse(path, data){
+	function labelTraverse(path, data) {
 		var item = path.shift(),
-		value = data[item];
-		
-		if(path.length && typeof value === "object"){
+			value = data[item];
+
+		if (path.length && typeof value === "object") {
 			return labelTraverse(path, value);
 		}
 
 		return value;
 	}
 
-	if(formatterParams.labelField){
+	if (formatterParams.labelField) {
 		data = cell.getData();
 		label = labelTraverse(formatterParams.labelField.split(this.table.options.nestedFieldSeparator), data);
 	}
 
-	if(formatterParams.label){
-		switch(typeof formatterParams.label){
+	if (formatterParams.label) {
+		switch (typeof formatterParams.label) {
 			case "string":
 				label = formatterParams.label;
 				break;
@@ -37,15 +36,15 @@ export default function(cell, formatterParams, onRendered){
 		}
 	}
 
-	if(label){
-		if(formatterParams.urlField){
+	if (label) {
+		if (formatterParams.urlField) {
 			data = cell.getData();
 
 			value = Helpers.retrieveNestedData(this.table.options.nestedFieldSeparator, formatterParams.urlField, data);
 		}
 
-		if(formatterParams.url){
-			switch(typeof formatterParams.url){
+		if (formatterParams.url) {
+			switch (typeof formatterParams.url) {
 				case "string":
 					value = formatterParams.url;
 					break;
@@ -58,15 +57,15 @@ export default function(cell, formatterParams, onRendered){
 
 		el.setAttribute("href", urlPrefix + value);
 
-		if(formatterParams.target){
+		if (formatterParams.target) {
 			el.setAttribute("target", formatterParams.target);
 		}
 
-		if(formatterParams.download){
+		if (formatterParams.download) {
 
-			if(typeof download == "function"){
+			if (typeof download == "function") {
 				download = download(cell);
-			}else{
+			} else {
 				download = download === true ? "" : download;
 			}
 
@@ -76,7 +75,7 @@ export default function(cell, formatterParams, onRendered){
 		el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
 
 		return el;
-	}else{
-		return "&nbsp;";
+	} else {
+		return "";
 	}
 }
