@@ -345,9 +345,9 @@ export default class Column extends CoreFeature {
 	//nested field lookup
 	_getNestedData(data) {
 		var dataObj = data,
-			structure = this.fieldStructure,
-			length = structure.length,
-			output;
+		structure = this.fieldStructure,
+		length = structure.length,
+		output;
 
 		for (let i = 0; i < length; i++) {
 
@@ -373,8 +373,8 @@ export default class Column extends CoreFeature {
 	//nested field set
 	_setNestedData(data, value) {
 		var dataObj = data,
-			structure = this.fieldStructure,
-			length = structure.length;
+		structure = this.fieldStructure,
+		length = structure.length;
 
 		for (let i = 0; i < length; i++) {
 
@@ -929,18 +929,18 @@ export default class Column extends CoreFeature {
 				definition = Object.assign(definition, updates);
 
 				return this.table.columnManager.addColumn(definition, false, this)
-				.then((column) => {
+					.then((column) => {
 
-					if (definition.field == this.field) {
-						this.field = false; //clear field name to prevent deletion of duplicate column from arrays
-					}
+						if (definition.field == this.field) {
+							this.field = false; //clear field name to prevent deletion of duplicate column from arrays
+						}
 
-					return this.delete()
-					.then(() => {
-						return column.getComponent();
+						return this.delete()
+							.then(() => {
+								return column.getComponent();
+							});
+
 					});
-
-				});
 			} else {
 				console.error("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 				return Promise.reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");

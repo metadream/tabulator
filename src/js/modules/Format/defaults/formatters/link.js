@@ -2,15 +2,15 @@ import Helpers from '../../../../core/tools/Helpers.js';
 
 export default function(cell, formatterParams, onRendered) {
 	var value = cell.getValue(),
-		urlPrefix = formatterParams.urlPrefix || "",
-		download = formatterParams.download,
-		label = value,
-		el = document.createElement("a"),
-		data;
+	urlPrefix = formatterParams.urlPrefix || "",
+	download = formatterParams.download,
+	label = value,
+	el = document.createElement("a"),
+	data;
 
 	function labelTraverse(path, data) {
 		var item = path.shift(),
-			value = data[item];
+		value = data[item];
 
 		if (path.length && typeof value === "object") {
 			return labelTraverse(path, value);

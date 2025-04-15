@@ -51,7 +51,7 @@ export default class Format extends Module {
 
 	lookupTypeFormatter(column, type) {
 		var config = { params: column.definition["formatter" + type + "Params"] || {} },
-			formatter = column.definition["formatter" + type];
+		formatter = column.definition["formatter" + type];
 
 		config.formatter = this.lookupFormatter(formatter);
 
@@ -133,7 +133,7 @@ export default class Format extends Module {
 	//return a formatted value for a cell
 	formatValue(cell) {
 		var component = cell.getComponent(),
-			params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
+		params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
 		function onRendered(callback) {
 			if (!cell.modules.format) {
@@ -149,7 +149,7 @@ export default class Format extends Module {
 
 	formatExportValue(cell, type) {
 		var formatter = cell.column.modules.format[type],
-			params;
+		params;
 
 		if (formatter) {
 			params = typeof formatter.params === "function" ? formatter.params(cell.getComponent()) : formatter.params;
