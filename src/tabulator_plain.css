@@ -11,6 +11,7 @@
     border-radius: 5px;
     background-color: var(--light-line-color);
     font-size: 14px;
+    line-height: normal;
     text-align: left;
     overflow: hidden;
     -webkit-transform: translateZ(0);
@@ -105,6 +106,8 @@
 .tabulator .tabulator-header .tabulator-col.tabulator-moving {
     position: absolute;
     background: var(--light-line-color);
+    border-left: 1px solid var(--dark-line-color);
+    border-right: 1px solid var(--dark-line-color);
     pointer-events: none;
 }
 
@@ -518,11 +521,20 @@
     font-size: inherit;
 }
 
+.tabulator .tabulator-footer .tabulator-paginator label {
+    display: initial;
+    cursor: initial;
+}
+
+.tabulator .tabulator-footer .tabulator-paginator select {
+    width: auto;
+}
+
 .tabulator .tabulator-footer .tabulator-page-size {
     outline: 0;
     display: inline-block;
     margin: 0 7px;
-    padding: 4px;
+    padding: 3px;
     background: #fff;
     border: 1px solid var(--minor-color);
     border-radius: 3px;
@@ -536,11 +548,17 @@
     display: inline-block;
     border: 1px solid var(--minor-color);
     border-radius: 3px;
+    color: inherit;
     background: #fff;
-    padding: 5px 7px;
+    padding: 4px 8px;
     margin: 0 2px;
-    min-width: 27px;
+    min-width: 30px;
+    height: auto;
     transition: background .3s;
+}
+
+.tabulator .tabulator-footer .tabulator-page:not(.active) {
+    font-weight: 400;
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {
@@ -616,20 +634,22 @@
     display: inline-block;
     margin: 0 auto;
     padding: 10px 20px;
-    border-radius: 10px;
+    border-radius: 5px;
     background: #fff;
     font-weight: bold;
     font-size: 16px;
 }
 
 .tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-msg {
-    border: 4px solid #333;
-    color: #000;
+    border: 0;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .tabulator .tabulator-alert .tabulator-alert-msg.tabulator-alert-state-error {
-    border: 4px solid #d00;
-    color: #590000;
+    border: 0;
+    color: #fff;
+    background: rgba(217, 37, 7, 0.6);
 }
 
 /** 表格行样式 */
@@ -756,28 +776,31 @@
     border-left: 1px solid var(--dark-line-color);
 }
 
-/** 消除右侧固定列边框线条重复问题 */
-.tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-right:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: -1px;
-    width: 8px;
-    transform: translateX(-100%);
-    background: #fff;
+.tabulator-row.tabulator-selected .tabulator-cell.tabulator-frozen.tabulator-frozen-left:after,
+.tabulator-row.tabulator-selected .tabulator-cell.tabulator-frozen.tabulator-frozen-right:before {
+    background: var(--selected-bg-color);
 }
 
+/** 消除右侧固定列边框线条重复问题 */
 /** 给左侧固定列也增加一定宽度的遮挡 */
+.tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-right:before,
 .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left:after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    right: -1px;
-    width: 8px;
-    transform: translateX(100%);
+    width: 5px;
     background: #fff;
+}
+
+.tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-right:before {
+    left: -1px;
+    transform: translateX(-100%);
+}
+
+.tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left:after {
+    right: -1px;
+    transform: translateX(100%);
 }
 
 .tabulator-row .tabulator-cell.tabulator-editing {
