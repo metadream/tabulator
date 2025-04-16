@@ -648,6 +648,325 @@ class Module extends CoreFeature{
 	
 }
 
+var defaultConfig = {
+	method: "GET",
+};
+
+function generateParamsList$1(data, prefix){
+	var output = [];
+
+	prefix = prefix || "";
+
+	if(Array.isArray(data)){
+		data.forEach((item, i) => {
+			output = output.concat(generateParamsList$1(item, prefix ? prefix + "[" + i + "]" : i));
+		});
+	}else if (typeof data === "object"){
+		for (var key in data){
+			output = output.concat(generateParamsList$1(data[key], prefix ? prefix + "[" + key + "]" : key));
+		}
+	}else {
+		output.push({key:prefix, value:data});
+	}
+
+	return output;
+}
+
+function serializeParams(params){
+	var output = generateParamsList$1(params),
+	encoded = [];
+
+	output.forEach(function(item){
+		encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.value));
+	});
+
+	return encoded.join("&");
+}
+
+function defaultURLGenerator(url, config, params){
+	if(url){
+		if(params && Object.keys(params).length){
+			if(!config.method || config.method.toLowerCase() == "get"){
+				config.method = "get";
+
+				url += (url.includes("?") ? "&" : "?") + serializeParams(params);
+			}
+		}
+	}
+
+	return url;
+}
+
+function defaultLoaderPromise(url, config, params){
+	var contentType;
+
+	return new Promise((resolve, reject) => {
+		//set url
+		url = this.urlGenerator.call(this.table, url, config, params);
+
+		//set body content if not GET request
+		if(config.method.toUpperCase() != "GET"){
+			contentType = typeof this.table.options.ajaxContentType === "object" ?  this.table.options.ajaxContentType : this.contentTypeFormatters[this.table.options.ajaxContentType];
+			if(contentType){
+
+				for(var key in contentType.headers){
+					if(!config.headers){
+						config.headers = {};
+					}
+
+					if(typeof config.headers[key] === "undefined"){
+						config.headers[key] = contentType.headers[key];
+					}
+				}
+
+				config.body = contentType.body.call(this, url, config, params);
+
+			}else {
+				console.warn("Ajax Error - Invalid ajaxContentType value:", this.table.options.ajaxContentType);
+			}
+		}
+
+		if(url){
+			//configure headers
+			if(typeof config.headers === "undefined"){
+				config.headers = {};
+			}
+
+			if(typeof config.headers.Accept === "undefined"){
+				config.headers.Accept = "application/json";
+			}
+
+			if(typeof config.headers["X-Requested-With"] === "undefined"){
+				config.headers["X-Requested-With"] = "XMLHttpRequest";
+			}
+
+			if(typeof config.mode === "undefined"){
+				config.mode = "cors";
+			}
+
+			if(config.mode == "cors"){
+				if(typeof config.headers["Origin"] === "undefined"){
+					config.headers["Origin"] = window.location.origin;
+				}
+        
+				if(typeof config.credentials === "undefined"){
+					config.credentials = 'same-origin';
+				}
+			}else {
+				if(typeof config.credentials === "undefined"){
+					config.credentials = 'include';
+				}
+			}
+
+			//send request
+			fetch(url, config)
+				.then((response)=>{
+					if(response.ok) {
+						response.json()
+							.then((data)=>{
+								resolve(data);
+							}).catch((error)=>{
+								reject(error);
+								console.warn("Ajax Load Error - Invalid JSON returned", error);
+							});
+					}else {
+						console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
+						reject(response);
+					}
+				})
+				.catch((error)=>{
+					console.error("Ajax Load Error - Connection Error: ", error);
+					reject(error);
+				});
+		}else {
+			console.warn("Ajax Load Error - No URL Set");
+			resolve([]);
+		}
+	});
+}
+
+function generateParamsList(data, prefix){
+	var output = [];
+
+	prefix = prefix || "";
+
+	if(Array.isArray(data)){
+		data.forEach((item, i) => {
+			output = output.concat(generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
+		});
+	}else if (typeof data === "object"){
+		for (var key in data){
+			output = output.concat(generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
+		}
+	}else {
+		output.push({key:prefix, value:data});
+	}
+
+	return output;
+}
+
+var defaultContentTypeFormatters = {
+	"json":{
+		headers:{
+			'Content-Type': 'application/json',
+		},
+		body:function(url, config, params){
+			return JSON.stringify(params);
+		},
+	},
+	"form":{
+		headers:{
+		},
+		body:function(url, config, params){
+
+			var output = generateParamsList(params),
+			form = new FormData();
+
+			output.forEach(function(item){
+				form.append(item.key, item.value);
+			});
+
+			return form;
+		},
+	},
+};
+
+class Ajax extends Module{
+
+	static moduleName = "ajax";
+
+	//load defaults
+	static defaultConfig = defaultConfig;
+	static defaultURLGenerator = defaultURLGenerator;
+	static defaultLoaderPromise = defaultLoaderPromise;
+	static contentTypeFormatters = defaultContentTypeFormatters;
+	
+	constructor(table){
+		super(table);
+		
+		this.config = {}; //hold config object for ajax request
+		this.url = ""; //request URL
+		this.urlGenerator = false;
+		this.params = false; //request parameters
+		
+		this.loaderPromise = false;
+		
+		this.registerTableOption("ajaxURL", false); //url for ajax loading
+		this.registerTableOption("ajaxURLGenerator", false);
+		this.registerTableOption("ajaxParams", {});  //params for ajax loading
+		this.registerTableOption("ajaxConfig", "get"); //ajax request type
+		this.registerTableOption("ajaxContentType", "form"); //ajax request type
+		this.registerTableOption("ajaxRequestFunc", false); //promise function
+		
+		this.registerTableOption("ajaxRequesting", function(){});
+		this.registerTableOption("ajaxResponse", false);
+		
+		this.contentTypeFormatters = Ajax.contentTypeFormatters;
+	}
+	
+	//initialize setup options
+	initialize(){
+		this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
+		this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
+		
+		if(this.table.options.ajaxURL){
+			this.setUrl(this.table.options.ajaxURL);
+		}
+
+
+		this.setDefaultConfig(this.table.options.ajaxConfig);
+		
+		this.registerTableFunction("getAjaxUrl", this.getUrl.bind(this));
+		
+		this.subscribe("data-loading", this.requestDataCheck.bind(this));
+		this.subscribe("data-params", this.requestParams.bind(this));
+		this.subscribe("data-load", this.requestData.bind(this));
+	}
+	
+	requestParams(data, config, silent, params){
+		var ajaxParams = this.table.options.ajaxParams;
+		
+		if(ajaxParams){
+			if(typeof ajaxParams === "function"){
+				ajaxParams = ajaxParams.call(this.table);
+			}
+			
+			params = Object.assign(Object.assign({}, ajaxParams), params);
+		}		
+		
+		return params;
+	}
+	
+	requestDataCheck(data, params, config, silent){
+		return !!((!data && this.url) || typeof data === "string");
+	}
+	
+	requestData(url, params, config, silent, previousData){
+		var ajaxConfig;
+		
+		if(!previousData && this.requestDataCheck(url)){
+			if(url){
+				this.setUrl(url);
+			}
+			
+			ajaxConfig = this.generateConfig(config);
+			
+			return this.sendRequest(this.url, params, ajaxConfig);
+		}else {
+			return previousData;
+		}
+	}
+	
+	setDefaultConfig(config = {}){
+		this.config = Object.assign({}, Ajax.defaultConfig);
+
+		if(typeof config == "string"){
+			this.config.method = config;
+		}else {
+			Object.assign(this.config, config);
+		}
+	}
+	
+	//load config object
+	generateConfig(config = {}){
+		var ajaxConfig = Object.assign({}, this.config);
+		
+		if(typeof config == "string"){
+			ajaxConfig.method = config;
+		}else {
+			Object.assign(ajaxConfig, config);
+		}
+		
+		return ajaxConfig;
+	}
+	
+	//set request url
+	setUrl(url){
+		this.url = url;
+	}
+	
+	//get request url
+	getUrl(){
+		return this.url;
+	}
+	
+	//send ajax request
+	sendRequest(url, params, config){
+		if(this.table.options.ajaxRequesting.call(this.table, url, params) !== false){
+			return this.loaderPromise(url, config, params)
+				.then((data)=>{
+					if(this.table.options.ajaxResponse){
+						data = this.table.options.ajaxResponse.call(this.table, url, params, data);
+					}
+				
+					return data;
+				});
+		}else {
+			return Promise.reject();
+		}
+	}
+}
+
 function plaintext(cell, formatterParams, onRendered){
 	return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 }
@@ -782,7 +1101,7 @@ function link(cell, formatterParams, onRendered) {
 
 		return el;
 	} else {
-		return "";
+		return "&#8203;";
 	}
 }
 
@@ -1108,7 +1427,7 @@ class CellComponent {
 	}
 }
 
-function progress(cell, formatterParams = {}, onRendered){ //progress bar
+function progress(cell, formatterParams = {}, onRendered) { //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
 	max = formatterParams.max ? formatterParams.max : 100,
@@ -1125,7 +1444,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 	percentValue = Math.round((percentValue - min) / percent);
 
 	//set bar color
-	switch(typeof formatterParams.color){
+	switch (typeof formatterParams.color) {
 		case "string":
 			color = formatterParams.color;
 			break;
@@ -1133,7 +1452,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 			color = formatterParams.color(value);
 			break;
 		case "object":
-			if(Array.isArray(formatterParams.color)){
+			if (Array.isArray(formatterParams.color)) {
 				let unit = 100 / formatterParams.color.length;
 				let index = Math.floor(percentValue / unit);
 
@@ -1147,7 +1466,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 	}
 
 	//generate legend
-	switch(typeof formatterParams.legend){
+	switch (typeof formatterParams.legend) {
 		case "string":
 			legend = formatterParams.legend;
 			break;
@@ -1162,7 +1481,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 	}
 
 	//set legend color
-	switch(typeof formatterParams.legendColor){
+	switch (typeof formatterParams.legendColor) {
 		case "string":
 			legendColor = formatterParams.legendColor;
 			break;
@@ -1170,7 +1489,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 			legendColor = formatterParams.legendColor(value);
 			break;
 		case "object":
-			if(Array.isArray(formatterParams.legendColor)){
+			if (Array.isArray(formatterParams.legendColor)) {
 				let unit = 100 / formatterParams.legendColor.length;
 				let index = Math.floor(percentValue / unit);
 
@@ -1202,7 +1521,7 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 	barContainer.style.width = "100%";
 	barContainer.style.height = "100%";
 
-	if(legend){
+	if (legend) {
 		var legendEl = document.createElement("div");
 		legendEl.style.position = "absolute";
 		legendEl.style.top = 0;
@@ -1213,26 +1532,25 @@ function progress(cell, formatterParams = {}, onRendered){ //progress bar
 		legendEl.innerHTML = legend;
 	}
 
-	onRendered(function(){
+	onRendered(function() {
 
 		//handle custom element needed if formatter is to be included in printed/downloaded output
-		if(!(cell instanceof CellComponent)){
+		if (!(cell instanceof CellComponent)) {
 			var holderEl = document.createElement("div");
 			holderEl.style.position = "absolute";
 			holderEl.style.top = "4px";
 			holderEl.style.bottom = "4px";
 			holderEl.style.left = "4px";
 			holderEl.style.right = "4px";
-
 			element.appendChild(holderEl);
-
 			element = holderEl;
+		} else {
+			element.innerHTML = "";
 		}
-
 		element.appendChild(barContainer);
 		barContainer.appendChild(barEl);
 
-		if(legend){
+		if (legend) {
 			barContainer.appendChild(legendEl);
 		}
 	});
@@ -1612,7 +1930,7 @@ class Format extends Module {
 	}
 
 	emptyToSpace(value) {
-		return value === null || typeof value === "undefined" || value === "" ? "" : value;
+		return value === null || typeof value === "undefined" || value === "" ? "&#8203;" : value;
 	}
 
 }
@@ -5765,6 +6083,7 @@ class Sort extends Module{
 
 var allModules = /*#__PURE__*/Object.freeze({
 	__proto__: null,
+	AjaxModule: Ajax,
 	FormatModule: Format,
 	FrozenColumnsModule: FrozenColumns,
 	FrozenRowsModule: FrozenRows,
@@ -6137,7 +6456,7 @@ class Cell extends CoreFeature {
 				this.element.innerHTML = "";
 				break;
 			default:
-				this.element.innerHTML = `<span>${val}</span>`;
+				this.element.innerHTML = `<span>${val || "&#8203;"}</span>`;
 		}
 	}
 
@@ -6584,19 +6903,19 @@ class Column extends CoreFeature {
 
 			if (def.field) {
 				this.langBind("columns|" + def.field, (text) => {
-					titleElement.value = text || (def.title || "");
+					titleElement.value = text || (def.title || "&#8203;");
 				});
 			} else {
-				titleElement.value = def.title || "";
+				titleElement.value = def.title || "&#8203;";
 			}
 
 		} else {
 			if (def.field) {
 				this.langBind("columns|" + def.field, (text) => {
-					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || ""));
+					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&#8203;"));
 				});
 			} else {
-				this._formatColumnHeaderTitle(titleHolderElement, def.title || "");
+				this._formatColumnHeaderTitle(titleHolderElement, def.title || "&#8203;");
 			}
 		}
 
@@ -14340,5 +14659,5 @@ class PseudoRow {
 	rendered(){}
 }
 
-export { CalcComponent, CellComponent, ColumnComponent, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Page as PageModule, PseudoRow, RangeComponent, Renderer, ResizeColumns as ResizeColumnsModule, RowComponent, SelectRow as SelectRowModule, SheetComponent, Sort as SortModule, Tabulator$1 as Tabulator, TabulatorFull$1 as TabulatorFull };
+export { Ajax as AjaxModule, CalcComponent, CellComponent, ColumnComponent, Format as FormatModule, FrozenColumns as FrozenColumnsModule, FrozenRows as FrozenRowsModule, GroupComponent, Module, MoveColumns as MoveColumnsModule, MoveRows as MoveRowsModule, Page as PageModule, PseudoRow, RangeComponent, Renderer, ResizeColumns as ResizeColumnsModule, RowComponent, SelectRow as SelectRowModule, SheetComponent, Sort as SortModule, Tabulator$1 as Tabulator, TabulatorFull$1 as TabulatorFull };
 //# sourceMappingURL=tabulator_esm.mjs.map

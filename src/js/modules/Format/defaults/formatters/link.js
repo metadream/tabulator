@@ -76,6 +76,6 @@ export default function(cell, formatterParams, onRendered) {
 
 		return el;
 	} else {
-		return "";
+		return "&#8203;";
 	}
 }

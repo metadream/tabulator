@@ -277,19 +277,19 @@ export default class Column extends CoreFeature {
 
 			if (def.field) {
 				this.langBind("columns|" + def.field, (text) => {
-					titleElement.value = text || (def.title || "");
+					titleElement.value = text || (def.title || "&#8203;");
 				});
 			} else {
-				titleElement.value = def.title || "";
+				titleElement.value = def.title || "&#8203;";
 			}
 
 		} else {
 			if (def.field) {
 				this.langBind("columns|" + def.field, (text) => {
-					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || ""));
+					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&#8203;"));
 				});
 			} else {
-				this._formatColumnHeaderTitle(titleHolderElement, def.title || "");
+				this._formatColumnHeaderTitle(titleHolderElement, def.title || "&#8203;");
 			}
 		}
 

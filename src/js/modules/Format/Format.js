@@ -192,7 +192,7 @@ export default class Format extends Module {
 	}
 
 	emptyToSpace(value) {
-		return value === null || typeof value === "undefined" || value === "" ? "" : value;
+		return value === null || typeof value === "undefined" || value === "" ? "&#8203;" : value;
 	}
 
 }

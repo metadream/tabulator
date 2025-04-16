@@ -1,6 +1,6 @@
 import CellComponent from '../../../../core/cell/CellComponent.js';
 
-export default function(cell, formatterParams = {}, onRendered){ //progress bar
+export default function(cell, formatterParams = {}, onRendered) { //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
 	max = formatterParams.max ? formatterParams.max : 100,
@@ -17,7 +17,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 	percentValue = Math.round((percentValue - min) / percent);
 
 	//set bar color
-	switch(typeof formatterParams.color){
+	switch (typeof formatterParams.color) {
 		case "string":
 			color = formatterParams.color;
 			break;
@@ -25,7 +25,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 			color = formatterParams.color(value);
 			break;
 		case "object":
-			if(Array.isArray(formatterParams.color)){
+			if (Array.isArray(formatterParams.color)) {
 				let unit = 100 / formatterParams.color.length;
 				let index = Math.floor(percentValue / unit);
 
@@ -39,7 +39,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 	}
 
 	//generate legend
-	switch(typeof formatterParams.legend){
+	switch (typeof formatterParams.legend) {
 		case "string":
 			legend = formatterParams.legend;
 			break;
@@ -54,7 +54,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 	}
 
 	//set legend color
-	switch(typeof formatterParams.legendColor){
+	switch (typeof formatterParams.legendColor) {
 		case "string":
 			legendColor = formatterParams.legendColor;
 			break;
@@ -62,7 +62,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 			legendColor = formatterParams.legendColor(value);
 			break;
 		case "object":
-			if(Array.isArray(formatterParams.legendColor)){
+			if (Array.isArray(formatterParams.legendColor)) {
 				let unit = 100 / formatterParams.legendColor.length;
 				let index = Math.floor(percentValue / unit);
 
@@ -94,7 +94,7 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 	barContainer.style.width = "100%";
 	barContainer.style.height = "100%";
 
-	if(legend){
+	if (legend) {
 		var legendEl = document.createElement("div");
 		legendEl.style.position = "absolute";
 		legendEl.style.top = 0;
@@ -105,26 +105,25 @@ export default function(cell, formatterParams = {}, onRendered){ //progress bar
 		legendEl.innerHTML = legend;
 	}
 
-	onRendered(function(){
+	onRendered(function() {
 
 		//handle custom element needed if formatter is to be included in printed/downloaded output
-		if(!(cell instanceof CellComponent)){
+		if (!(cell instanceof CellComponent)) {
 			var holderEl = document.createElement("div");
 			holderEl.style.position = "absolute";
 			holderEl.style.top = "4px";
 			holderEl.style.bottom = "4px";
 			holderEl.style.left = "4px";
 			holderEl.style.right = "4px";
-
 			element.appendChild(holderEl);
-
 			element = holderEl;
+		} else {
+			element.innerHTML = "";
 		}
-
 		element.appendChild(barContainer);
 		barContainer.appendChild(barEl);
 
-		if(legend){
+		if (legend) {
 			barContainer.appendChild(legendEl);
 		}
 	});
