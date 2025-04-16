@@ -1,3 +1,4 @@
+export { default as AjaxModule } from '../../modules/Ajax/Ajax.js';
 export { default as FormatModule } from '../../modules/Format/Format.js';
 export { default as FrozenColumnsModule } from '../../modules/FrozenColumns/FrozenColumns.js';
 export { default as FrozenRowsModule } from '../../modules/FrozenRows/FrozenRows.js';
