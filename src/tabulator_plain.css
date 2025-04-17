@@ -39,6 +39,10 @@
     height: 16px;
 }
 
+.tabulator input[type="checkbox"]:disabled {
+    cursor: default;
+}
+
 .tabulator-row .tabulator-cell > span {
     display: block;
     white-space: nowrap;
